@@ -4,7 +4,7 @@ create schema graduate_project
 -- create the permits table
 create table graduate_project.permits (
     permit_id smallserial constraint permit_key primary key,
-    pass_name varchar(50),
+    pass_name varchar(150),
     state_coverage text,
     cost double precision
 );
@@ -16,10 +16,18 @@ create table graduate_project.national_forest(
     acerage integer,
     phone_num integer,
     address varchar(150),
+    -- counties this forest covers.
+    location text,
     website varchar(250),
     annual_visitors integer,
+    -- founding date of the forest
+    established date,
     permits_id smallserial references graduate_project.permits (permit_id)
 );
+
+alter table graduate_project.national_forest add column  location text;
+alter table graduate_project.national_forest add column   established date;
+
 
 create table graduate_project.forest_region(
     forest_region_id smallserial constraint forest_region_key primary key,
@@ -114,3 +122,32 @@ create table graduate_project.trails (
     forest_id  serial references graduate_project.national_forest (forest_id),
     wilderness_id integer references  graduate_project.wilderness_areas (wilderness_id)
 );
+
+-- insert into cardinal directions
+
+insert into graduate_project.forest_region (direction) values ('NORTHEAST');
+insert into graduate_project.forest_region (direction) values ('NORTHWEST');
+insert into graduate_project.forest_region (direction) values ('SOUTHWEST');
+insert into graduate_project.forest_region (direction) values ('SOUTHEAST');
+
+select * from graduate_project.forest_region;
+
+-- insert into national forest permits table
+insert into graduate_project.permits (pass_name, state_coverage, cost) VALUES ('NorthWest Forest Pass', 'OR-WA', 30.00);
+
+
+alter table graduate_project.national_forest alter column phone_num set data type TEXT ;
+
+-- adds checknumber constraint to the telephone number column
+ALTER TABLE graduate_project.national_forest
+ADD CONSTRAINT check_number check (  graduate_project.national_forest.phone_num ~ '^(\+\d{1,2}\s)?\(?\d{3}\)?[\s.-]?\d{3}[\s.-]?\d{4}$'     );
+
+-- insert into national forest table
+-- adds deschutes national_forest
+insert into graduate_project.national_forest (state, acerage, phone_num, address, website, annual_visitors, location, established, permits_id)
+values ('OR',1596900,'5413835300','63095 Deschutes Market Road, Bend ORD 97701','https://www.fs.usda.gov/deschutes/',3162000,'Deschutes, Kalamath, Lake, and Jefferson Counties','1908-07-01',1);
+
+insert into graduate_project.national_forest (state, acerage, phone_num, address, website, annual_visitors, location, established, permits_id)
+values ()
+
+select * from graduate_project.national_forest;
